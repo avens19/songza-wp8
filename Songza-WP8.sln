@@ -1,0 +1,66 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Songza-WP8", "Songza-WP8\Songza-WP8.csproj", "{4CB722E1-E394-4B18-8B6C-BA23EE057FFC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongzaAudioPlaybackAgent", "SongzaAudioPlaybackAgent\SongzaAudioPlaybackAgent.csproj", "{D0F22BBB-334E-462E-874B-5AE017EEAA87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongzaClasses", "SongzaClasses\SongzaClasses.csproj", "{0C783D9C-828C-44B7-AAA5-2B1CD2DE3C91}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|ARM = Debug|ARM
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|ARM = Release|ARM
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4CB722E1-E394-4B18-8B6C-BA23EE057FFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CB722E1-E394-4B18-8B6C-BA23EE057FFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CB722E1-E394-4B18-8B6C-BA23EE057FFC}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{4CB722E1-E394-4B18-8B6C-BA23EE057FFC}.Debug|ARM.ActiveCfg = Debug|ARM
+		{4CB722E1-E394-4B18-8B6C-BA23EE057FFC}.Debug|ARM.Build.0 = Debug|ARM
+		{4CB722E1-E394-4B18-8B6C-BA23EE057FFC}.Debug|ARM.Deploy.0 = Debug|ARM
+		{4CB722E1-E394-4B18-8B6C-BA23EE057FFC}.Debug|x86.ActiveCfg = Debug|x86
+		{4CB722E1-E394-4B18-8B6C-BA23EE057FFC}.Debug|x86.Build.0 = Debug|x86
+		{4CB722E1-E394-4B18-8B6C-BA23EE057FFC}.Debug|x86.Deploy.0 = Debug|x86
+		{4CB722E1-E394-4B18-8B6C-BA23EE057FFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CB722E1-E394-4B18-8B6C-BA23EE057FFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CB722E1-E394-4B18-8B6C-BA23EE057FFC}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{4CB722E1-E394-4B18-8B6C-BA23EE057FFC}.Release|ARM.ActiveCfg = Release|ARM
+		{4CB722E1-E394-4B18-8B6C-BA23EE057FFC}.Release|ARM.Build.0 = Release|ARM
+		{4CB722E1-E394-4B18-8B6C-BA23EE057FFC}.Release|ARM.Deploy.0 = Release|ARM
+		{4CB722E1-E394-4B18-8B6C-BA23EE057FFC}.Release|x86.ActiveCfg = Release|x86
+		{4CB722E1-E394-4B18-8B6C-BA23EE057FFC}.Release|x86.Build.0 = Release|x86
+		{4CB722E1-E394-4B18-8B6C-BA23EE057FFC}.Release|x86.Deploy.0 = Release|x86
+		{D0F22BBB-334E-462E-874B-5AE017EEAA87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0F22BBB-334E-462E-874B-5AE017EEAA87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0F22BBB-334E-462E-874B-5AE017EEAA87}.Debug|ARM.ActiveCfg = Debug|ARM
+		{D0F22BBB-334E-462E-874B-5AE017EEAA87}.Debug|ARM.Build.0 = Debug|ARM
+		{D0F22BBB-334E-462E-874B-5AE017EEAA87}.Debug|x86.ActiveCfg = Debug|x86
+		{D0F22BBB-334E-462E-874B-5AE017EEAA87}.Debug|x86.Build.0 = Debug|x86
+		{D0F22BBB-334E-462E-874B-5AE017EEAA87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0F22BBB-334E-462E-874B-5AE017EEAA87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0F22BBB-334E-462E-874B-5AE017EEAA87}.Release|ARM.ActiveCfg = Release|ARM
+		{D0F22BBB-334E-462E-874B-5AE017EEAA87}.Release|ARM.Build.0 = Release|ARM
+		{D0F22BBB-334E-462E-874B-5AE017EEAA87}.Release|x86.ActiveCfg = Release|x86
+		{D0F22BBB-334E-462E-874B-5AE017EEAA87}.Release|x86.Build.0 = Release|x86
+		{0C783D9C-828C-44B7-AAA5-2B1CD2DE3C91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C783D9C-828C-44B7-AAA5-2B1CD2DE3C91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C783D9C-828C-44B7-AAA5-2B1CD2DE3C91}.Debug|ARM.ActiveCfg = Debug|ARM
+		{0C783D9C-828C-44B7-AAA5-2B1CD2DE3C91}.Debug|ARM.Build.0 = Debug|ARM
+		{0C783D9C-828C-44B7-AAA5-2B1CD2DE3C91}.Debug|x86.ActiveCfg = Debug|x86
+		{0C783D9C-828C-44B7-AAA5-2B1CD2DE3C91}.Debug|x86.Build.0 = Debug|x86
+		{0C783D9C-828C-44B7-AAA5-2B1CD2DE3C91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C783D9C-828C-44B7-AAA5-2B1CD2DE3C91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C783D9C-828C-44B7-AAA5-2B1CD2DE3C91}.Release|ARM.ActiveCfg = Release|ARM
+		{0C783D9C-828C-44B7-AAA5-2B1CD2DE3C91}.Release|ARM.Build.0 = Release|ARM
+		{0C783D9C-828C-44B7-AAA5-2B1CD2DE3C91}.Release|x86.ActiveCfg = Release|x86
+		{0C783D9C-828C-44B7-AAA5-2B1CD2DE3C91}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

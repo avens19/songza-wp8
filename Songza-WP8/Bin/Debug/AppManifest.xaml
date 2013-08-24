@@ -1,0 +1,8 @@
+﻿<Deployment xmlns="http://schemas.microsoft.com/client/2007/deployment" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" EntryPointAssembly="Songza-WP8" EntryPointType="Songza_WP8.App" RuntimeVersion="4.7.50308.0">
+  <Deployment.Parts>
+    <AssemblyPart x:Name="Songza-WP8" Source="Songza-WP8.dll" />
+    <AssemblyPart x:Name="SongzaAudioPlaybackAgent" Source="SongzaAudioPlaybackAgent.dll" />
+    <AssemblyPart x:Name="SongzaClasses" Source="SongzaClasses.dll" />
+    <AssemblyPart x:Name="RestSharp.WindowsPhone" Source="RestSharp.WindowsPhone.dll" />
+  </Deployment.Parts>
+</Deployment>
