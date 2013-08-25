@@ -34,10 +34,11 @@ namespace Songza_WP8
             catch (Exception ex)
             {
                 Error.Text = "Login failed";
+                Console.WriteLine(ex.Message);
             }
         }
 
-        private void KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        private new void KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == System.Windows.Input.Key.Enter)
                 DoLogin();

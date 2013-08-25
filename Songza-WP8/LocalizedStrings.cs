@@ -9,6 +9,6 @@ namespace Songza_WP8
     {
         private static AppResources _localizedResources = new AppResources();
 
-        public AppResources LocalizedResources { get { return _localizedResources; } }
+        public static AppResources LocalizedResources { get { return _localizedResources; } }
     }
 }

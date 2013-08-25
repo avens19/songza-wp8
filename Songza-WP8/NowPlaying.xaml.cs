@@ -32,20 +32,19 @@ namespace Songza_WP8
             CurrentTrack.DataContext = BackgroundAudioPlayer.Instance.Track;
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
-            string s;
+            var track = BackgroundAudioPlayer.Instance.Track;
 
-            if (settings.Contains("station"))
-            {
-                Station st = (Station)settings["station"];
+            string id = track.Tag;
 
-                Station.DataContext = st;
+            Station s = await API.GetStation(id);
 
-                LoadSimilar(st);
-            }
+            Station.DataContext = s;
+
+            LoadSimilar(s);
         }
 
         async void LoadSimilar(Station s)

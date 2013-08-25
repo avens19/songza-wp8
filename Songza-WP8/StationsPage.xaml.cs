@@ -58,8 +58,6 @@ namespace Songza_WP8
 
             Progress.Visibility = System.Windows.Visibility.Collapsed;
 
-            API.SetCurrentStation(s);
-
             NavigationService.Navigate(new Uri("/NowPlaying.xaml", UriKind.Relative));
         }
 

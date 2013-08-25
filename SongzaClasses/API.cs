@@ -35,14 +35,6 @@ namespace Songza_WP8
             return await Execute<List<Scenario>>(request);
         }
 
-        public static void SetCurrentStation(Station s)
-        {
-            if (settings.Contains("station"))
-                settings["station"] = s;
-            else
-                settings.Add("station", s);
-        }
-
         public static async Task<List<Station>> SimilarStations(Station s)
         {
             var request = new RestRequest(string.Format("station/{0}/similar",s.Id));
@@ -106,6 +98,13 @@ namespace Songza_WP8
             }
 
             return await Execute<List<Station>>(request);
+        }
+
+        public static async Task<Station> GetStation(string id)
+        {
+            var request = new RestRequest(string.Format("station/{0}", id));
+
+            return await Execute<Station>(request);
         }
 
         public static async Task<List<Station>> Recent()
