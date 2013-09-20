@@ -10,6 +10,7 @@ using Microsoft.Phone.BackgroundAudio;
 using System.IO.IsolatedStorage;
 using Microsoft.Phone.Shell;
 using SongzaClasses;
+using System.Threading;
 
 namespace Songza_WP8
 {
@@ -35,6 +36,11 @@ namespace Songza_WP8
             return await Execute<List<Scenario>>(request);
         }
 
+        public static bool IsLoggedIn()
+        {
+            return settings.Contains("login");
+        }
+
         public static async Task<List<Station>> SimilarStations(Station s)
         {
             var request = new RestRequest(string.Format("station/{0}/similar",s.Id));
@@ -49,7 +55,7 @@ namespace Songza_WP8
             return await Execute<List<Favorite>>(request);
         }
 
-        public static async void AddToFavorite(string station, string favorite)
+        public static async Task AddToFavorite(string station, string favorite)
         {
             var request = new RestRequest(string.Format("collection/{0}/add-station", favorite));
             request.AddParameter("station", station);
@@ -84,6 +90,20 @@ namespace Songza_WP8
         private static async void NotifyTrackPlay(string station, string track)
         { 
             var request = new RestRequest(string.Format("station/{0}/song/{1}/notify-play",station,track));
+            request.Method = Method.POST;
+            await Execute<object>(request);
+        }
+
+        public static async void ThumbUpTrack(string station, string track)
+        {
+            var request = new RestRequest(string.Format("station/{0}/song/{1}/vote/up", station, track));
+            request.Method = Method.POST;
+            await Execute<object>(request);
+        }
+
+        public static async void ThumbDownTrack(string station, string track)
+        {
+            var request = new RestRequest(string.Format("station/{0}/song/{1}/vote/down", station, track));
             request.Method = Method.POST;
             await Execute<object>(request);
         }
@@ -175,7 +195,82 @@ namespace Songza_WP8
 
         public static AudioTrack CreateTrack(Track t, string station)
         {
-            return new AudioTrack(new Uri(t.ListenUrl), t.Song.Title, t.Song.Artist.Name, t.Song.Album, new Uri(t.Song.CoverUrl), station, EnabledPlayerControls.Pause | EnabledPlayerControls.SkipNext);
+            string tag = string.Format("{0}&{1}&0",station,t.Song.Id);
+            return new AudioTrack(new Uri(t.ListenUrl), t.Song.Title, t.Song.Artist.Name, t.Song.Album, new Uri(t.Song.CoverUrl), tag, EnabledPlayerControls.Pause | EnabledPlayerControls.SkipNext);
+        }
+
+        public static string GetCurrentStation(AudioTrack at)
+        {
+            if (at == null || at.Tag == null)
+                return null;
+
+            string[] split = at.Tag.Split('&');
+
+            if (split.Length < 3)
+                return null;
+
+            return split[0];
+        }
+
+        public static string GetCurrentTrackId(AudioTrack at)
+        {
+            if (at == null || at.Tag == null)
+                return null;
+
+            string[] split = at.Tag.Split('&');
+
+            if (split.Length < 3)
+                return null;
+
+            return split[1];
+        }
+
+        public static void GetCurrentStationAndTrack(AudioTrack at, out string station, out string track)
+        {
+            station = null;
+            track = null;
+
+            if (at == null || at.Tag == null)
+                return;
+
+            string[] split = at.Tag.Split('&');
+
+            if (split.Length < 3)
+                return;
+
+            station = split[0];
+            track = split[1];
+        }
+
+        public static string GetThumbUpState(AudioTrack at)
+        {
+            if (at == null || at.Tag == null)
+                return null;
+
+            string[] split = at.Tag.Split('&');
+
+            if (split.Length < 3)
+                return null;
+
+            return split[2];
+        }
+
+        public static void AddThumbUpToTrack(AudioTrack at)
+        {
+            if (at == null || string.IsNullOrWhiteSpace(at.Tag))
+                return;
+
+            string tag = at.Tag;
+
+            tag = tag.Substring(0, tag.Length - 1);
+
+            tag += "1";
+
+            at.BeginEdit();
+
+            at.Tag = tag;
+
+            at.EndEdit();
         }
 
         public async static Task<List<Station>> QueryStations(string queryString)
@@ -228,6 +323,8 @@ namespace Songza_WP8
             if (settings.Contains("sessionid") && DateTime.Now.Subtract((DateTime)settings["created"]).TotalHours < 24)
                 request.AddParameter("sessionid", settings["sessionid"], ParameterType.Cookie);
 
+            request.Timeout = 10000;
+
             client.ExecuteAsync<T>(request, (response) =>
                 {
                     if (response == null)
@@ -244,6 +341,17 @@ namespace Songza_WP8
                             return;
                         }
                         tcs.SetException(response.ErrorException);
+                        return;
+                    }
+
+                    if (response.ResponseStatus == ResponseStatus.TimedOut)
+                    {
+                        tcs.SetException(new TimeoutException("The server did not respond in time"));
+                        return;
+                    }
+                    else if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        tcs.SetException(new IOException("The server returned code: " + response.StatusCode));
                         return;
                     }
 

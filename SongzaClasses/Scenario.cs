@@ -14,5 +14,6 @@ namespace Songza_WP8
         public string Id { get; set; }
         public string SelectedMessage { get; set; }
         public List<Situation> Situations { get; set; }
+        public List<int> StationIds { get; set; }
     }
 }

@@ -51,37 +51,55 @@ namespace Songza_WP8
 
         private async void Load(List<Popular> pops, List<PivotWrapper> list)
         {
-            for (int i = 0; i < pops.Count; i++)
+            try
             {
-                List<Station> subs = await API.PopularStations(pops[i].Tag);
-
-                foreach (var item in subs)
+                for (int i = 0; i < pops.Count; i++)
                 {
-                    list[i].List.Add(item);
+                    List<Station> subs = await API.PopularStations(pops[i].Tag);
+
+                    foreach (var item in subs)
+                    {
+                        list[i].List.Add(item);
+                    }
                 }
             }
-
-            Progress.Visibility = System.Windows.Visibility.Collapsed;
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                Progress.Visibility = System.Windows.Visibility.Collapsed;
+            }
         }
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            Progress.Visibility = System.Windows.Visibility.Visible;
+            try
+            {
+                Progress.Visibility = System.Windows.Visibility.Visible;
 
-            Button sp = (Button)sender;
-            Station s = (Station)sp.Tag;
+                Button sp = (Button)sender;
+                Station s = (Station)sp.Tag;
 
-            Track t = await API.NextTrack(s.Id);
+                Track t = await API.NextTrack(s.Id);
 
-            AudioTrack at = API.CreateTrack(t, s.Id.ToString());
+                AudioTrack at = API.CreateTrack(t, s.Id.ToString());
 
-            BackgroundAudioPlayer.Instance.Track = at;
+                BackgroundAudioPlayer.Instance.Track = at;
 
-            BackgroundAudioPlayer.Instance.Play();
+                BackgroundAudioPlayer.Instance.Play();
 
-            Progress.Visibility = System.Windows.Visibility.Collapsed;
-
-            NavigationService.Navigate(new Uri("/NowPlaying.xaml", UriKind.Relative));
+                NavigationService.Navigate(new Uri("/NowPlaying.xaml", UriKind.Relative));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                Progress.Visibility = System.Windows.Visibility.Collapsed;
+            }
         }
 
         private void List_Click(object sender, RoutedEventArgs e)

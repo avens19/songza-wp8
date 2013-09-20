@@ -18,6 +18,7 @@ namespace Songza_WP8
     {
         static IsolatedStorageSettings settings = IsolatedStorageSettings.ApplicationSettings;
         private string Station;
+        private bool loaded = false;
 
         public Favorites()
         {
@@ -30,30 +31,55 @@ namespace Songza_WP8
         {
             base.OnNavigatedTo(e);
 
-            string s = null;
+            try
+            {
+                if (!loaded)
+                {
+                    Progress.Visibility = System.Windows.Visibility.Visible;
 
-            NavigationContext.QueryString.TryGetValue("station", out s);
+                    string s = null;
 
-            Station = s;
+                    NavigationContext.QueryString.TryGetValue("station", out s);
 
-            if (!settings.Contains("login"))
-                NavigationService.GoBack();
+                    Station = s;
 
-            List<Favorite> favs = await API.Favorites();
+                    if (!settings.Contains("login"))
+                        NavigationService.GoBack();
 
-            FavoriteList.ItemsSource = favs;
+                    List<Favorite> favs = await API.Favorites();
+
+                    FavoriteList.ItemsSource = favs;
+
+                    loaded = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                Progress.Visibility = System.Windows.Visibility.Collapsed;
+            }
         }
 
-        private void but_Click(object sender, RoutedEventArgs e)
+        private async void but_Click(object sender, RoutedEventArgs e)
         {
             if (Station != null)
             {
-                Button b = (Button)sender;
-                Favorite a = (Favorite)b.Tag;
+                try
+                {
+                    Button b = (Button)sender;
+                    Favorite a = (Favorite)b.Tag;
 
-                API.AddToFavorite(Station, a.Id.ToString());
+                    await API.AddToFavorite(Station, a.Id.ToString());
 
-                NavigationService.GoBack();
+                    NavigationService.GoBack();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
             else
             {

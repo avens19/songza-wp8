@@ -13,6 +13,8 @@ namespace Songza_WP8
 {
     public partial class StationsPage : PhoneApplicationPage
     {
+        private bool loaded = false;
+
         public StationsPage()
         {
             InitializeComponent();
@@ -22,51 +24,77 @@ namespace Songza_WP8
         {
             base.OnNavigatedTo(e);
 
-            Progress.Visibility = System.Windows.Visibility.Visible;
-
-            string s;
-
-            if (!NavigationContext.QueryString.TryGetValue("stations", out s) || s == "")
+            try
             {
-                NavigationService.GoBack();
-                return;
+                if (!loaded)
+                {
+                    Progress.Visibility = System.Windows.Visibility.Visible;
+
+                    string s;
+
+                    if (!NavigationContext.QueryString.TryGetValue("stations", out s) || s == "")
+                    {
+                        NavigationService.GoBack();
+                        return;
+                    }
+
+                    string[] stns = s.Split(',');
+
+                    List<Station> stations = await API.ListStations(stns);
+
+                    StationList.ItemsSource = stations;
+
+                    loaded = true;
+                }
             }
-
-            string[] stns = s.Split(',');
-
-            List<Station> stations = await API.ListStations(stns);
-
-            StationList.ItemsSource = stations;
-
-            Progress.Visibility = System.Windows.Visibility.Collapsed;
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                Progress.Visibility = System.Windows.Visibility.Collapsed;
+            }
         }
 
         private async void but_Click(object sender, RoutedEventArgs e)
         {
-            Progress.Visibility = System.Windows.Visibility.Visible;
+            try
+            {
+                Progress.Visibility = System.Windows.Visibility.Visible;
 
-            Button sp = (Button)sender;
-            Station s = (Station)sp.Tag;
+                Button sp = (Button)sender;
+                Station s = (Station)sp.Tag;
 
-            Track t = await API.NextTrack(s.Id);
+                Track t = await API.NextTrack(s.Id);
 
-            AudioTrack at = API.CreateTrack(t, s.Id.ToString());
+                AudioTrack at = API.CreateTrack(t, s.Id.ToString());
 
-            BackgroundAudioPlayer.Instance.Track = at;
+                BackgroundAudioPlayer.Instance.Track = at;
 
-            BackgroundAudioPlayer.Instance.Play();
+                BackgroundAudioPlayer.Instance.Play();
 
-            Progress.Visibility = System.Windows.Visibility.Collapsed;
-
-            NavigationService.Navigate(new Uri("/NowPlaying.xaml", UriKind.Relative));
+                NavigationService.Navigate(new Uri("/NowPlaying.xaml", UriKind.Relative));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                Progress.Visibility = System.Windows.Visibility.Collapsed;
+            }
         }
 
         private void List_Click(object sender, RoutedEventArgs e)
         {
-            MenuItem mi = (MenuItem)sender;
-            Station station = (Station)mi.Tag;
+            if (API.IsLoggedIn())
+            {
+                MenuItem mi = (MenuItem)sender;
+                Station station = (Station)mi.Tag;
 
-            NavigationService.Navigate(new Uri(string.Format("/Favorites.xaml?station={0}",station.Id), UriKind.Relative));
+                NavigationService.Navigate(new Uri(string.Format("/Favorites.xaml?station={0}", station.Id), UriKind.Relative));
+            }
         }
 
     }

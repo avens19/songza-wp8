@@ -13,6 +13,8 @@ namespace Songza_WP8
 {
     public partial class SearchResults : PhoneApplicationPage
     {
+        private bool loaded = false;
+
         public SearchResults()
         {
             InitializeComponent();
@@ -22,62 +24,105 @@ namespace Songza_WP8
         {
             base.OnNavigatedTo(e);
 
-            string query;
-
-            if (!NavigationContext.QueryString.TryGetValue("query", out query) || query == "")
+            if (!loaded)
             {
-                NavigationService.GoBack();
-                return;
-            }
+                try
+                {
+                    Progress.Visibility = System.Windows.Visibility.Visible;
 
-            List<Station> stations = await API.QueryStations(query);
-            Stations.ItemsSource = stations;
-            List<Track.Artist> artists = await API.QueryArtists(query);
-            ArtistList.ItemsSource = artists;
+                    string query;
+
+                    if (!NavigationContext.QueryString.TryGetValue("query", out query) || query == "")
+                    {
+                        NavigationService.GoBack();
+                        return;
+                    }
+
+                    List<Station> stations = await API.QueryStations(query);
+                    Stations.ItemsSource = stations;
+                    List<Track.Artist> artists = await API.QueryArtists(query);
+                    ArtistList.ItemsSource = artists;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                finally
+                {
+                    Progress.Visibility = System.Windows.Visibility.Collapsed;
+                }
+            }
         }
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            Button sp = (Button)sender;
-            Station s = (Station)sp.Tag;
+            try
+            {
+                Progress.Visibility = System.Windows.Visibility.Visible;
+                Button sp = (Button)sender;
+                Station s = (Station)sp.Tag;
 
-            Track t = await API.NextTrack(s.Id);
+                Track t = await API.NextTrack(s.Id);
 
-            AudioTrack at = API.CreateTrack(t, s.Id.ToString());
+                AudioTrack at = API.CreateTrack(t, s.Id.ToString());
 
-            BackgroundAudioPlayer.Instance.Track = at;
+                BackgroundAudioPlayer.Instance.Track = at;
 
-            BackgroundAudioPlayer.Instance.Play();
+                BackgroundAudioPlayer.Instance.Play();
 
-            NavigationService.Navigate(new Uri("/NowPlaying.xaml", UriKind.Relative));
+                NavigationService.Navigate(new Uri("/NowPlaying.xaml", UriKind.Relative));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                Progress.Visibility = System.Windows.Visibility.Collapsed;
+            }
         }
 
         private void List_Click(object sender, RoutedEventArgs e)
         {
-            MenuItem mi = (MenuItem)sender;
-            Station station = (Station)mi.Tag;
+            if (API.IsLoggedIn())
+            {
+                MenuItem mi = (MenuItem)sender;
+                Station station = (Station)mi.Tag;
 
-            NavigationService.Navigate(new Uri(string.Format("/Favorites.xaml?station={0}", station.Id), UriKind.Relative));
+                NavigationService.Navigate(new Uri(string.Format("/Favorites.xaml?station={0}", station.Id), UriKind.Relative));
+            }
         }
 
         private async void Artist_Click(object sender, RoutedEventArgs e)
         {
-            Button b = (Button)sender;
-            Track.Artist a = (Track.Artist)b.Tag;
-
-            List<Station> stns = await API.StationsForArtist(a.Id);
-
-            string stations = "";
-
-            for (int i = 0; i < stns.Count; i++)
+            try
             {
-                stations += stns[i].Id;
+                Progress.Visibility = System.Windows.Visibility.Visible;
+                Button b = (Button)sender;
+                Track.Artist a = (Track.Artist)b.Tag;
 
-                if (i < stns.Count - 1)
-                    stations += ",";
+                List<Station> stns = await API.StationsForArtist(a.Id);
+
+                string stations = "";
+
+                for (int i = 0; i < stns.Count; i++)
+                {
+                    stations += stns[i].Id;
+
+                    if (i < stns.Count - 1)
+                        stations += ",";
+                }
+
+                NavigationService.Navigate(new Uri("/StationsPage.xaml?stations=" + stations, UriKind.Relative));
             }
-
-            NavigationService.Navigate(new Uri("/StationsPage.xaml?stations=" + stations, UriKind.Relative));
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                Progress.Visibility = System.Windows.Visibility.Collapsed;
+            }
         }
     }
 }

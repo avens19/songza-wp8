@@ -9,11 +9,14 @@ using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using SongzaClasses;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace Songza_WP8
 {
     public partial class BrowsePage : PhoneApplicationPage
     {
+        private bool loaded = false;
+
         public BrowsePage()
         {
             InitializeComponent();
@@ -23,27 +26,44 @@ namespace Songza_WP8
         {
             base.OnNavigatedTo(e);
 
-            Progress.Visibility = System.Windows.Visibility.Visible;
-
-            List<PivotWrapper> list = new List<PivotWrapper>();
-
-            List<Category> cats = await API.Categories();
-
-            foreach (var item in cats)
+            if (!loaded)
             {
-                list.Add(new PivotWrapper()
+                Progress.Visibility = System.Windows.Visibility.Visible;
+
+                List<PivotWrapper> list = new List<PivotWrapper>();
+
+                try
                 {
-                    TitleText = item.Name,
-                    List = new ObservableCollection<object>()
-                });
+
+                    List<Category> cats = await API.Categories();
+
+                    foreach (var item in cats)
+                    {
+                        list.Add(new PivotWrapper()
+                        {
+                            TitleText = item.Name,
+                            List = new ObservableCollection<object>()
+                        });
+                    }
+
+                    BrowsePivot.ItemsSource = list;
+
+                    await Load(cats, list);
+
+                    loaded = true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                finally 
+                {
+                    Progress.Visibility = System.Windows.Visibility.Collapsed;
+                }
             }
-
-            BrowsePivot.ItemsSource = list;
-
-            Load(cats,list);
         }
 
-        private async void Load(List<Category> cats, List<PivotWrapper> list)
+        private async Task Load(List<Category> cats, List<PivotWrapper> list)
         {
             for (int i = 0; i < cats.Count; i++)
             {

@@ -26,6 +26,7 @@ namespace Songza_WP8
         {
             try
             {
+                Progress.Visibility = System.Windows.Visibility.Visible;
                 Error.Text = "";
                 await API.Login(Username.Text, Password.Password);
 
@@ -35,6 +36,10 @@ namespace Songza_WP8
             {
                 Error.Text = "Login failed";
                 Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                Progress.Visibility = System.Windows.Visibility.Collapsed;
             }
         }
 

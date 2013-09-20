@@ -96,6 +96,7 @@
     <Compile Include="Favorites.xaml.cs">
       <DependentUpon>Favorites.xaml</DependentUpon>
     </Compile>
+    <Compile Include="LittleWatson.cs" />
     <Compile Include="LocalizedStrings.cs" />
     <Compile Include="Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
@@ -206,12 +207,15 @@
     </Content>
     <Content Include="Images\add.png" />
     <Content Include="Images\Background.png" />
+    <Content Include="Images\basecircle-blue.png" />
     <Content Include="Images\basecircle.png" />
     <Content Include="Images\favs.png" />
     <Content Include="Images\feature.search.png" />
     <Content Include="Images\folder.png" />
     <Content Include="Images\icon_300x300.png" />
     <Content Include="Images\like.png" />
+    <Content Include="Images\Thumbs-Down.png" />
+    <Content Include="Images\Thumbs-Up.png" />
     <Content Include="Images\transport.ff.png" />
     <Content Include="Images\transport.pause.png" />
     <Content Include="Images\transport.play.png" />

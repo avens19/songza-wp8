@@ -3,15 +3,18 @@ using System.Diagnostics;
 using System.Windows;
 using Microsoft.Phone.BackgroundAudio;
 using System.Collections.Generic;
-using Songza_WP8;
 using System.Threading.Tasks;
 using Microsoft.Phone.Shell;
+using System.IO.IsolatedStorage;
+using System.IO;
+using Songza_WP8;
 
 namespace SongzaAudioPlaybackAgent
 {
     public class AudioPlayer : AudioPlayerAgent
     {
-        static string station = "";
+        const string filename = "LittleWatson.txt";
+        const string flagname = "LittleWatsonFlag.txt";
 
         /// <remarks>
         /// AudioPlayer instances can share the same process.
@@ -30,6 +33,8 @@ namespace SongzaAudioPlaybackAgent
         /// Code to execute on Unhandled Exceptions
         private static void UnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)
         {
+            ReportException(e.ExceptionObject, "In audio player UE");
+
             if (Debugger.IsAttached)
             {
                 // An unhandled exception has occurred; break into the debugger
@@ -55,17 +60,25 @@ namespace SongzaAudioPlaybackAgent
         /// </remarks>
         protected async override void OnPlayStateChanged(BackgroundAudioPlayer player, AudioTrack track, PlayState playState)
         {
-            station = BackgroundAudioPlayer.Instance.Track.Tag;
             switch (playState)
             {
                 case PlayState.TrackEnded:
-                    player.Track = await GetNextTrack();
+                    try
+                    {
+                        var t = await GetNextTrack();
+                        if (t != null)
+                            player.Track = t;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        player.Pause();
+                    }
                     break;
                 case PlayState.TrackReady:
                     player.Play();
                     break;
                 case PlayState.Shutdown:
-                    // TODO: Handle the shutdown state here (e.g. save state)
                     break;
                 case PlayState.Unknown:
                     break;
@@ -76,8 +89,10 @@ namespace SongzaAudioPlaybackAgent
                 case PlayState.Playing:
                     break;
                 case PlayState.BufferingStarted:
+                    Console.WriteLine("Buffering Started");
                     break;
                 case PlayState.BufferingStopped:
+                    Console.WriteLine("Buffering Stopped");
                     break;
                 case PlayState.Rewinding:
                     break;
@@ -105,7 +120,6 @@ namespace SongzaAudioPlaybackAgent
         /// </remarks>
         protected override async void OnUserAction(BackgroundAudioPlayer player, AudioTrack track, UserAction action, object param)
         {
-            station = BackgroundAudioPlayer.Instance.Track.Tag;
             switch (action)
             {
                 case UserAction.Play:
@@ -121,25 +135,32 @@ namespace SongzaAudioPlaybackAgent
                     player.Pause();
                     break;
                 case UserAction.FastForward:
-                    player.FastForward();
+                    //player.FastForward();
+                    //Not supported by Songza
                     break;
                 case UserAction.Rewind:
-                    player.Rewind();
+                    //player.Rewind();
+                    //Not supported by Songza
                     break;
                 case UserAction.Seek:
-                    player.Position = (TimeSpan)param;
+                    //player.Position = (TimeSpan)param;
+                    //Not supported by Songza
                     break;
                 case UserAction.SkipNext:
-                    var t = await GetNextTrack();
-                    if (t != null)
-                        player.Track = t;
+                    try
+                    {
+                        var t = await GetNextTrack();
+                        if (t != null)
+                            player.Track = t;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        player.Pause();
+                    }
                     break;
                 case UserAction.SkipPrevious:
-                    AudioTrack previousTrack = GetPreviousTrack();
-                    if (previousTrack != null)
-                    {
-                        player.Track = previousTrack;
-                    }
+                    //Not supported by Songza
                     break;
             }
 
@@ -159,33 +180,17 @@ namespace SongzaAudioPlaybackAgent
         /// <returns>an instance of AudioTrack, or null if the playback is completed</returns>
         private async Task<AudioTrack> GetNextTrack()
         {
+            string station = API.GetCurrentStation(BackgroundAudioPlayer.Instance.Track);
+
+            if (string.IsNullOrWhiteSpace(station))
+                return null;
+
             Track t = await API.NextTrack(long.Parse(station));
 
             if (t == null)
                 return null;
 
-            return API.CreateTrack(t,station);
-        }
-
-        /// <summary>
-        /// Implements the logic to get the previous AudioTrack instance.
-        /// </summary>
-        /// <remarks>
-        /// The AudioTrack URI determines the source, which can be:
-        /// (a) Isolated-storage file (Relative URI, represents path in the isolated storage)
-        /// (b) HTTP URL (absolute URI)
-        /// (c) MediaStreamSource (null)
-        /// </remarks>
-        /// <returns>an instance of AudioTrack, or null if previous track is not allowed</returns>
-        private AudioTrack GetPreviousTrack()
-        {
-            // TODO: add logic to get the previous audio track
-
-            AudioTrack track = null;
-
-            // specify the track
-
-            return track;
+            return API.CreateTrack(t, station);
         }
 
         /// <summary>
@@ -201,15 +206,7 @@ namespace SongzaAudioPlaybackAgent
         /// </remarks>
         protected override void OnError(BackgroundAudioPlayer player, AudioTrack track, Exception error, bool isFatal)
         {
-            if (isFatal)
-            {
-                Abort();
-            }
-            else
-            {
-                NotifyComplete();
-            }
-
+            NotifyComplete();
         }
 
         /// <summary>
@@ -221,7 +218,37 @@ namespace SongzaAudioPlaybackAgent
         /// </remarks>
         protected override void OnCancel()
         {
+            NotifyComplete();
+        }
 
+        private static void ReportException(Exception ex, string extra)
+        {
+            try
+            {
+                using (var store = IsolatedStorageFile.GetUserStoreForApplication())
+                {
+                    IsolatedStorageFileStream file;
+
+                    if (!store.FileExists(filename))
+                        file = store.CreateFile(filename);
+                    else
+                        file = store.OpenFile(filename, FileMode.Append);
+
+                    store.CreateFile(flagname);
+
+                    using (TextWriter output = new StreamWriter(file))
+                    {
+                        output.WriteLine(extra);
+                        output.WriteLine(ex.Message);
+                        output.WriteLine(ex.StackTrace);
+                        output.WriteLine();
+                        output.WriteLine();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 }

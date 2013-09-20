@@ -28,17 +28,29 @@
                     <TextBlock HorizontalAlignment="Center" Margin="0,20,0,0" FontSize="30" Text="{Binding Title}"/>
                     <TextBlock HorizontalAlignment="Center" Text="{Binding Artist}"/>
                     <TextBlock HorizontalAlignment="Center" Text="{Binding Album}"/>
-                    <Grid HorizontalAlignment="Center" Height="100" Margin="0,20,0,0" VerticalAlignment="Top" Width="300">
-                        <Button HorizontalAlignment="Center" BorderThickness="0" Height="80" Margin="0,0,0,0" VerticalAlignment="Top" Width="80" Click="Play_Click">
+                    <Grid HorizontalAlignment="Center" Height="100" Margin="0,20,0,0" VerticalAlignment="Top" Width="400">
+                        <Button HorizontalAlignment="Left" BorderThickness="0" Height="80" Margin="0,0,0,0" VerticalAlignment="Top" Width="80" Click="ThumbUp_Click">
                             <Grid>
-                                <Image Source="Images/basecircle.png"/>
-                                <Image x:Name="PlayPause" Source="Images/transport.play.png"/>
+                                <Image x:Name="ThumbUpCircle" Source="Images/basecircle.png" Margin="-20"/>
+                                <Image x:Name="ThumbUp" Source="Images/Thumbs-Up.png" Margin="-20"/>
                             </Grid>
                         </Button>
-                        <Button  HorizontalAlignment="Right" BorderThickness="0" Height="80" Margin="0,0,26,0" VerticalAlignment="Top" Width="80" Click="Next_Click">
+                        <Button HorizontalAlignment="Left" BorderThickness="0" Height="80" Margin="105,0,0,0" VerticalAlignment="Top" Width="80" Click="ThumbDown_Click">
                             <Grid>
-                                <Image Source="Images/basecircle.png"/>
-                                <Image x:Name="Next" Source="Images/transport.ff.png"/>
+                                <Image Source="Images/basecircle.png" Margin="-20"/>
+                                <Image x:Name="ThumbDown" Source="Images/Thumbs-Down.png" Margin="-20"/>
+                            </Grid>
+                        </Button>
+                        <Button HorizontalAlignment="Right" BorderThickness="0" Height="80" Margin="0,0,105,0" VerticalAlignment="Top" Width="80" Click="Play_Click">
+                            <Grid>
+                                <Image Source="Images/basecircle.png" Margin="-20"/>
+                                <Image x:Name="PlayPause" Source="Images/transport.play.png" Margin="-20"/>
+                            </Grid>
+                        </Button>
+                        <Button  HorizontalAlignment="Right" BorderThickness="0" Height="80" Margin="0,0,0,0" VerticalAlignment="Top" Width="80" Click="Next_Click">
+                            <Grid>
+                                <Image Source="Images/basecircle.png" Margin="-20"/>
+                                <Image x:Name="Next" Source="Images/transport.ff.png" Margin="-20"/>
                             </Grid>
                         </Button>
                     </Grid>
@@ -48,7 +60,7 @@
                 <StackPanel x:Name="Station">
                     <TextBlock Text="{Binding Name}" Margin="20" FontSize="30" TextWrapping="Wrap"/>
                     <TextBlock Text="{Binding Description}" Margin="30" TextWrapping="Wrap"/>
-                    <Button Margin="50" Click="Add_Click" Tag="{Binding}">
+                    <Button Margin="50" Click="Add_Click" Tag="{Binding}" x:Name="Add">
                         <TextBlock Text="{Binding Path=LocalizedResources.CTX_Add, Source={StaticResource LocalizedStrings}}"/>
                     </Button>
                 </StackPanel>

@@ -39,7 +39,7 @@
                                             <Grid.Background>
                                                 <SolidColorBrush Color="Black" Opacity=".6"/>
                                             </Grid.Background>
-                                            <TextBlock Margin="5" Text="{Binding Name}" TextWrapping="Wrap"/>
+                                            <TextBlock Margin="5" Text="{Binding Name}" TextWrapping="Wrap" Foreground="White"/>
                                         </Grid>
                                     </Grid>
                                     <toolkit:ContextMenuService.ContextMenu>

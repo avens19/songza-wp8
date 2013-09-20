@@ -9,6 +9,7 @@ using Microsoft.Phone.Shell;
 using Songza_WP8.Resources;
 using System.Net;
 using System.Windows.Media;
+using SongzaClasses;
 
 namespace Songza_WP8
 {
@@ -101,6 +102,8 @@ namespace Songza_WP8
         // Code to execute on Unhandled Exceptions
         private void Application_UnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)
         {
+            LittleWatson.ReportException(e.ExceptionObject,"Main app UE");
+
             if (Debugger.IsAttached)
             {
                 // An unhandled exception has occurred; break into the debugger
